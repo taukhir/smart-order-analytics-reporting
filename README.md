@@ -20,7 +20,7 @@ The project is built to help master real-time data streaming, Kafka Streams proc
 
 ## 🏗️ Architecture Diagram
 
-
+![](C:\Users\Ahmed\Downloads\Architecture.drawio.png)
 
 
 ---
