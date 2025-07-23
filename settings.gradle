@@ -1,0 +1,5 @@
+rootProject.name = 'smart-order-analytics-reporting'
+
+include 'order-service'
+//include 'inventory-service'
+// Add more microservices here
