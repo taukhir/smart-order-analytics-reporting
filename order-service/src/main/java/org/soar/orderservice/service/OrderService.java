@@ -9,4 +9,6 @@ public interface OrderService {
     OrderResponse createOrder(OrderRequest request);
     OrderResponse getOrderById(Long id);
     List<OrderResponse> getOrdersByUserId(String userId);
+
+    List<OrderResponse> getAllOrders();
 }

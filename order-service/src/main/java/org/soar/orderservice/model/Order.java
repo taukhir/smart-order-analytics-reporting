@@ -32,6 +32,7 @@ public class Order {
     private OrderStatus status;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default // This annotation tells Lombok's @Builder to use the default initialization
     private List<OrderItem> items = new ArrayList<>();
 
 
