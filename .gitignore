@@ -1,8 +1,66 @@
-*.iml
-.gradle
-build/
-out/
-.idea/
-*.log
+# Java
 *.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# Maven (often present in multi-build systems, keeping for completeness)
+target/
+.mvn/
+!**/src/main/**/target/
+
+# Gradle
+.gradle/
+build/
+out/ # Sometimes used by IDEs
+.gradle-enterprise/
+.gradletasknamecache
+/hs_err_pid*
+
+# Gradle Wrapper
+!gradle/wrapper/gradle-wrapper.jar
+!**/gradle-wrapper.jar
+
+# IDEs
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+.project/
+.settings/
+.classpath
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+tmp/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+logs/
+*.log.*
+log/
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Misc
+*.swp
+*.bak
+*.orig
+*.pyc
+*.o
+*.so
+*.dll
+*.exe
+.env
+.env.*

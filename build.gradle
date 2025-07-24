@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '3.2.0'
+        springBootVersion = '3.5.3'
     }
     repositories {
         mavenCentral()
@@ -12,7 +12,7 @@ buildscript {
 
 allprojects {
     group = 'org.soar'
-    version = '1.0.0'
+    version = '0.0.1'
 
     repositories {
         mavenCentral()
