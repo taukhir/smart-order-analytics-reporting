@@ -20,33 +20,71 @@ The project is built to help master real-time data streaming, Kafka Streams proc
 
 ## 🏗️ Architecture Diagram
 
-![](C:\Users\Ahmed\Downloads\Architecture.drawio.png)
-
 
 ---
 
-## 🧩 Module Responsibilities
+## 🧩 Core Modules
 
-### ✅ `order-service`
+### 🛒 `order-service`
 
-- Accepts order creation requests via REST APIs.
-- Produces Kafka messages to `order-events` topic.
-- Applies validations and business rules.
-- Uses `KafkaTemplate` to publish events.
-
-**Why?**  
-This service is the *source of truth* for all orders. It decouples order creation from processing, enabling async scaling.
+* **Description**: Accepts order creation requests via REST APIs. Persists the order to its database and publishes an order event to Kafka using the **Outbox Pattern**.
+* **Why?**: Serves as the *source of truth* for all orders, decoupling order creation from subsequent processing and ensuring data consistency with asynchronous event publishing.
 
 ---
 
 ### 📦 `inventory-service`
 
-- Listens to `order-events` from Kafka.
-- Validates product availability.
-- Updates stock records and produces `inventory-events`.
+* **Description**: Listens to order events from Kafka. Validates product availability and updates stock records. Publishes inventory update events.
+* **Why?**: Enables isolated inventory logic, scales independently, and maintains separation of concerns between order and inventory management.
 
-**Why?**  
-Enables isolated inventory logic, scales independently, and keeps order and inventory concerns separate.
+---
+
+### 💰 `payment-service`
+
+* **Description**: Consumes order events from Kafka to process payments. Publishes payment status events (e.g., success/failure).
+* **Why?**: Handles payment processing in a separate, dedicated service, ensuring secure and scalable financial operations.
+
+---
+
+### 📊 `order-aggregator`
+
+* **Description**: Utilizes **Kafka Streams** to join and aggregate various order-related events (e.g., order created, inventory reserved, payment processed) to build and maintain a real-time, materialized view of current order states.
+* **Why?**: Provides real-time analytics and a consolidated view of order statuses without burdening core transactional services.
+
+---
+
+### 📈 `dashboard-service`
+
+* **Description**: Queries the materialized views created by `order-aggregator` or data streamed to OpenSearch/Elasticsearch to present real-time order statuses and analytical insights via a user interface.
+* **Why?**: Enables real-time monitoring and reporting for business users and operational teams.
+
+---
+
+### 🪵 `log-shipper`
+
+* **Description**: (Conceptual/Utility) Responsible for shipping service logs to a centralized logging system like **OpenSearch** (part of the **ELK** stack).
+* **Why?**: Centralized logging is crucial for observability, debugging, and operational monitoring in a distributed microservices environment.
+
+---
+
+### 📄 `schema-registry`
+
+* **Description**: Manages and stores **Avro** schemas for all Kafka events, ensuring schema evolution compatibility. Run via **Confluent** or **Apicurio**.
+* **Why?**: Critical for data governance, ensuring that producers and consumers understand the message format and allowing for graceful schema changes over time.
+
+---
+
+### 🔗 `kafka-connect`
+
+* **Description**: A sink connector configured to stream data from Kafka topics (e.g., aggregated order data) to **OpenSearch** or **Elasticsearch**.
+* **Why?**: Facilitates efficient data indexing for search, analytics, and reporting dashboards.
+
+---
+
+### 📚 `common-library`
+
+* **Description**: A shared module containing common models, **Avro** schemas, utilities, and configurations used across multiple services to maintain consistency and reduce code duplication.
+* **Why?**: Promotes reusability and ensures a single source of truth for shared data structures and utilities.
 
 ---
 
@@ -103,18 +141,7 @@ Spring's `KafkaTemplate` simplifies publishing events and handles serialization,
 
 ---
 
-## 🤝 Contribution Guidelines
-
-- Each module should be a Gradle subproject under this umbrella repo.
-- Ensure unit tests are written using TDD.
-- Keep Docker setups modular for Kafka, Zookeeper, and services.
-- Use meaningful commit messages and modular PRs.
-
----
-
 ## 📂 Repository Structure
-
-
 
 Enterprise-grade real-time analytics system using:
 - Spring Boot Microservices
@@ -122,3 +149,13 @@ Enterprise-grade real-time analytics system using:
 - Docker, Jenkins, GitHub Actions, ELK, Prometheus/Grafana
 - AI for log summarization and real-time issue detection
 - TDD with full JUnit coverage
+
+---
+
+## 🤝 Contribution Guidelines
+
+- Each module should be a Gradle subproject under this umbrella repo.
+- Ensure unit tests are written using TDD.
+- Keep Docker setups modular for Kafka, Zookeeper, and services.
+- Use meaningful commit messages and modular PRs.
+
