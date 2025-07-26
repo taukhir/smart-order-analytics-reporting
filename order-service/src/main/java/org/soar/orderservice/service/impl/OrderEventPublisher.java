@@ -22,8 +22,6 @@ public class OrderEventPublisher {
         kafkaTemplate.send(orderTopic, String.valueOf(event.getOrderId()), event);
     }
 
-    //    private KafkaTemplate<String, OrderEvent> kafkaTemplate;
-
 //    public String placeOrder(Order order) {
 //        String orderId = UUID.randomUUID().toString();
 //        order.setOrderId(orderId);
