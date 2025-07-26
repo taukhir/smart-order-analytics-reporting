@@ -19,7 +19,17 @@ public class OrderEventPublisher {
 
     public void publishOrderCreatedEvent(OrderEvent event) {
         log.info("Publishing order event to Kafka: {}", event);
-        kafkaTemplate.send(orderTopic, String.valueOf(event.getOrderId()), event);
+        kafkaTemplate.send(orderTopic, String.valueOf(event.getOrderId()), event)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        log.error("Message failed to send", ex);
+                    } else {
+                        log.info("Message sent successfully: {}", result);
+                    }
+                });
+
+        log.info("Published event: {}", event);
+
     }
 
 //    public String placeOrder(Order order) {

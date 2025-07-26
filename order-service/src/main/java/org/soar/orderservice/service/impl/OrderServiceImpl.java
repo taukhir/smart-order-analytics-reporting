@@ -52,8 +52,8 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotalAmount(totalAmount);
         Order savedOrder = orderRepository.save(order);
-//        OrderEvent event = new OrderEvent(order.getId(), order, order.getStatus().name());
-//        orderEventPublisher.publishOrderCreatedEvent(event);
+        OrderEvent event = new OrderEvent(order.getId(), order, order.getStatus().name());
+        orderEventPublisher.publishOrderCreatedEvent(event);
         return mapToResponse(savedOrder);
     }
 

@@ -2,15 +2,36 @@
 spring:
   profiles:
     active: dev # default profile is dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: HikariPool
+      auto-commit: true
+      transaction-isolation: TRANSACTION_READ_COMMITTED
 
+      maximum-pool-size: 5       # max concurrent connections
+      minimum-idle: 2             # keep at least 2 idle connections
+      connection-timeout: 30000   # ms to wait for a connection
+      idle-timeout: 600000        # ms before an idle conn is removed
+      max-lifetime: 1800000       # ms before a conn is retired
+      leak-detection-threshold: 2000  # ms to log leaked conns
+
+      register-mbeans: true       # expose pool metrics
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: true
 
 server:
-  port: 8081
-
+  port: 8080
 
 app:
   kafka:
@@ -23,6 +44,7 @@ logging:
   level:
     org.springframework.kafka: INFO
     org.soar.orderservice: INFO
+    org.apache.kafka: WARN
 
 management:
   endpoints:
@@ -49,20 +71,22 @@ spring:
     url: jdbc:postgresql://localhost:5432/orders_db
     username: order_user
     password: order_pass
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: order-service-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    bootstrap-servers: localhost:29092
+    #    consumer:
+#      group-id: order-service-group
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      retry-backoff-ms: 1000
+      properties:
+        enable.idempotence: true
 
 
 ---
@@ -73,23 +97,25 @@ spring:
       on-profile: docker
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/orderdb
-    username: postgres
-    password: admin
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    url: jdbc:postgresql://postgres:5432/orders_db
+    username: order_user
+    password: order_pass
 
   kafka:
     bootstrap-servers: kafka:9092
-    consumer:
-      group-id: order-service-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#    consumer:
+#      group-id: order-service-group
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      retry-backoff-ms: 1000
+      properties:
+        enable.idempotence: true
 
 
 ---
@@ -108,13 +134,18 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
 
   kafka:
-    bootstrap-servers: kafka:9092
-    consumer:
-      group-id: order-service-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    bootstrap-servers: localhost:29092
+    #    consumer:
+#      group-id: order-service-group
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      retry-backoff-ms: 1000
+      properties:
+        enable.idempotence: true
 
