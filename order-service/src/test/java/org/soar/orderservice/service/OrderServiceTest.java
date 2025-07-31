@@ -3,7 +3,6 @@ package org.soar.orderservice.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,11 +14,10 @@ import org.soar.orderservice.model.Order;
 import org.soar.orderservice.model.OrderItem;
 import org.soar.orderservice.model.OrderStatus;
 import org.soar.orderservice.repository.OrderRepository;
-import org.soar.orderservice.service.impl.OrderEventPublisher;
+import org.soar.orderservice.service.impl.OrderEventPublisherImpl;
 import org.soar.orderservice.service.impl.OrderServiceImpl;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +31,7 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderEventPublisher orderEventPublisher;
+    private OrderEventPublisherImpl orderEventPublisherImpl;
 
     @InjectMocks
     private OrderServiceImpl orderService;

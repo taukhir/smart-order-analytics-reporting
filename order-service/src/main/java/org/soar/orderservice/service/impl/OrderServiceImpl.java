@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderEventPublisher orderEventPublisher;
+    private final OrderEventPublisherImpl orderEventPublisherImpl;
 
 
     @Override
@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalAmount(totalAmount);
         Order savedOrder = orderRepository.save(order);
         OrderEvent event = new OrderEvent(order.getId(), order, order.getStatus().name());
-        orderEventPublisher.publishOrderCreatedEvent(event);
+        orderEventPublisherImpl.publishOrderCreatedEvent(event);
         return mapToResponse(savedOrder);
     }
 
